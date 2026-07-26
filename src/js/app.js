@@ -5,16 +5,18 @@ import { CanvasRenderer } from './services/canvas-renderer.js';
 import { parseSpotifyUrl, generateSpotifyCodeUrl } from './utils/spotify-utils.js';
 import { msToText } from './utils/format-utils.js';
 import { extractPalette } from './utils/color-utils.js';
-import { 
-    showLoading, 
-    showError, 
-    hideError, 
-    updateMetadata, 
-    downloadWallpaper, 
+import { ORIENTATION_LAYOUTS, STYLE_LABELS, FONT_OPTIONS } from './config.js';
+import {
+    showLoading,
+    showError,
+    hideError,
+    updateMetadata,
+    downloadWallpaper,
     copyPromptToClipboard
 } from './utils/ui-utils.js';
 
 const LAYOUT_PREFS_KEY = 'spotipaper:layoutPrefs';
+const FONT_FAMILY_BY_ID = Object.fromEntries(FONT_OPTIONS.map((f) => [f.id, f.family]));
 
 function loadLayoutPrefs() {
     try {
@@ -30,6 +32,16 @@ function saveLayoutPrefs(prefs) {
     } catch (_) {  }
 }
 
+function populateWallpaperStyleOptions(orientation) {
+    const select = document.getElementById('wallpaperStyle');
+    if (!select) return;
+
+    const previous = select.value;
+    const keys = Object.keys(ORIENTATION_LAYOUTS[orientation] || ORIENTATION_LAYOUTS.portrait);
+    select.innerHTML = keys.map((key) => `<option value="${key}">${STYLE_LABELS[key] || key}</option>`).join('');
+    select.value = keys.includes(previous) ? previous : keys[0];
+}
+
 export class SpotifyWallpaperApp {
     constructor() {
         this.auth = new SpotifyAuth();
@@ -41,49 +53,56 @@ export class SpotifyWallpaperApp {
     }
 
     resetCustomizationToDefaults() {
-                const defaults = {
+        const defaults = {
             titleOverride: '',
+            subtitleOverride: '',
+            showSubtitle: 'true',
             bgColor: '#000000',
             accentColor: '#1db954',
+            backgroundMode: '',
             gradientStrength: '1',
             gradientDirection: 'vertical',
             textColor: 'light',
             vignetteIntensity: '0.4',
-            showPalette: 'true'
+            showPalette: 'true',
+            paletteCount: '5',
+            fontFamily: FONT_OPTIONS[0].id,
+            titleFontSize: '48',
+            coverScale: '1',
+            coverRadius: '8',
+            showSpotifyCode: 'true',
+            spotifyCodeScale: '1'
         };
 
-        const bgColor = document.getElementById('bgColor');
-        const accentColor = document.getElementById('accentColor');
-        const gradientStrength = document.getElementById('gradientStrength');
-        const gradientDirection = document.getElementById('gradientDirection');
-        const textColor = document.getElementById('textColor');
-        const vignetteIntensity = document.getElementById('vignetteIntensity');
-        const showPalette = document.getElementById('showPalette');
-        const titleOverride = document.getElementById('titleOverride');
-
-                if (titleOverride) titleOverride.value = defaults.titleOverride;
-        if (bgColor) bgColor.value = defaults.bgColor;
-        if (accentColor) accentColor.value = defaults.accentColor;
-        if (gradientStrength) gradientStrength.value = defaults.gradientStrength;
-        if (gradientDirection) gradientDirection.value = defaults.gradientDirection;
-        if (textColor) textColor.value = defaults.textColor;
-        if (vignetteIntensity) vignetteIntensity.value = defaults.vignetteIntensity;
-        if (showPalette) showPalette.value = defaults.showPalette;
+        Object.entries(defaults).forEach(([id, value]) => {
+            const el = document.getElementById(id);
+            if (el) el.value = value;
+        });
     }
 
-        getCustomizationSettings() {
+    getCustomizationSettings() {
         return {
             orientation: document.getElementById('orientation')?.value || 'portrait',
-            landscapeStyle: document.getElementById('landscapeStyle')?.value || 'column',
+            wallpaperStyle: document.getElementById('wallpaperStyle')?.value || 'classic',
             titleOverride: document.getElementById('titleOverride')?.value || undefined,
+            subtitleOverride: document.getElementById('subtitleOverride')?.value || undefined,
+            showSubtitle: (document.getElementById('showSubtitle')?.value || 'true') === 'true',
             bgColor: document.getElementById('bgColor')?.value || undefined,
             accentColor: document.getElementById('accentColor')?.value || undefined,
+            backgroundMode: document.getElementById('backgroundMode')?.value || '',
             gradientStrength: parseFloat(document.getElementById('gradientStrength')?.value || '1'),
             gradientDirection: document.getElementById('gradientDirection')?.value || 'vertical',
             textColor: document.getElementById('textColor')?.value || 'light',
             vignetteIntensity: parseFloat(document.getElementById('vignetteIntensity')?.value || '0.4'),
             vignette: true,
             showPalette: (document.getElementById('showPalette')?.value || 'true') === 'true',
+            paletteCount: parseInt(document.getElementById('paletteCount')?.value || '5', 10),
+            fontFamily: FONT_FAMILY_BY_ID[document.getElementById('fontFamily')?.value] || undefined,
+            titleFontSize: parseInt(document.getElementById('titleFontSize')?.value || '48', 10),
+            coverScale: parseFloat(document.getElementById('coverScale')?.value || '1'),
+            coverRadius: parseInt(document.getElementById('coverRadius')?.value || '8', 10),
+            showSpotifyCode: (document.getElementById('showSpotifyCode')?.value || 'true') === 'true',
+            spotifyCodeScale: parseFloat(document.getElementById('spotifyCodeScale')?.value || '1')
         };
     }
 
@@ -100,12 +119,15 @@ export class SpotifyWallpaperApp {
         applySavedLayoutPrefs() {
         const prefs = loadLayoutPrefs();
         const orientationEl = document.getElementById('orientation');
-        const landscapeStyleEl = document.getElementById('landscapeStyle');
 
         if (prefs.orientation && orientationEl) orientationEl.value = prefs.orientation;
-        if (prefs.landscapeStyle && landscapeStyleEl) landscapeStyleEl.value = prefs.landscapeStyle;
 
-        this.syncLandscapeStyleVisibility();
+        populateWallpaperStyleOptions(orientationEl?.value || 'portrait');
+
+        const styleEl = document.getElementById('wallpaperStyle');
+        if (prefs.style && styleEl && Array.from(styleEl.options).some((o) => o.value === prefs.style)) {
+            styleEl.value = prefs.style;
+        }
     }
 
         setupEventListeners() {
@@ -134,7 +156,13 @@ export class SpotifyWallpaperApp {
                 this.generateWallpaper(true);
             }
         });
-                const customIds = ['orientation','landscapeStyle','titleOverride','bgColor','accentColor','gradientStrength','gradientDirection','textColor','vignetteIntensity','showPalette'];
+                const customIds = [
+            'wallpaperStyle', 'titleOverride', 'subtitleOverride', 'showSubtitle',
+            'bgColor', 'accentColor', 'backgroundMode', 'gradientStrength', 'gradientDirection', 'textColor',
+            'vignetteIntensity', 'showPalette', 'paletteCount',
+            'fontFamily', 'titleFontSize', 'coverScale', 'coverRadius',
+            'showSpotifyCode', 'spotifyCodeScale'
+        ];
         customIds.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
@@ -144,19 +172,17 @@ export class SpotifyWallpaperApp {
         });
 
                 const orientationEl = document.getElementById('orientation');
-        orientationEl.addEventListener('change', () => this.syncLandscapeStyleVisibility());
+        orientationEl.addEventListener('change', () => {
+            populateWallpaperStyleOptions(orientationEl.value);
+            this.rerenderWithCurrentSettings();
+        });
 
     }
 
-        syncLandscapeStyleVisibility() {
-        const group = document.getElementById('landscapeStyleGroup');
-        const orientation = document.getElementById('orientation')?.value;
-        if (group) group.style.display = orientation === 'landscape' ? '' : 'none';
-    }
         async rerenderWithCurrentSettings() {
         if (!this.currentTrackData) return;
         const settings = this.getCustomizationSettings();
-        saveLayoutPrefs({ orientation: settings.orientation, landscapeStyle: settings.landscapeStyle });
+        saveLayoutPrefs({ orientation: settings.orientation, style: settings.wallpaperStyle });
         await this.renderer.renderWallpaper(this.currentTrackData, settings);
     }
         async generateWallpaper(reset = false) {
@@ -179,7 +205,6 @@ export class SpotifyWallpaperApp {
         try {
             if (reset) {
                                 this.resetCustomizationToDefaults();
-                                this.syncLandscapeStyleVisibility();
                                 await this.renderer.reset();
             }
 
