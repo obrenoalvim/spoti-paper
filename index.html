@@ -38,7 +38,7 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
         <script type="application/ld+json">
     [
@@ -164,60 +164,71 @@
 </head>
 <body>
     <div id="app">
-        <div class="container">
-            <div class="header">
-                <h1>Gerador de Wallpaper Spotify</h1>
-                <p>Crie wallpapers personalizados com paleta de cores extraída das suas músicas e álbuns favoritos</p>
-            </div>
+        <div class="shell">
+            <aside class="sidebar" aria-label="Controles">
+                <div class="brand">
+                    <span class="brand-mark" aria-hidden="true">&#9680;</span>
+                    <div class="brand-text">
+                        <h1>spoti<span>Paper</span></h1>
+                        <p>wallpaper studio</p>
+                    </div>
+                </div>
 
-            <div class="main-content">
-                <div class="left-panel" aria-labelledby="leftPanelHeading">
-                    <h2 id="leftPanelHeading" class="sr-only">Controles</h2>
+                <div class="auth-badge" id="authSection">
+                    <span class="status-indicator" id="statusIndicator" aria-hidden="true"></span>
+                    <span id="authStatus">Desconectado</span>
+                    <button class="btn-ghost" id="authBtn">Conectar</button>
+                </div>
 
-                    
+                <div class="error" id="errorMessage" role="alert" aria-live="polite"></div>
 
-                                        <div class="auth-section" id="authSection">
-                        <div class="auth-status">
-                            <div class="status-indicator" id="statusIndicator" aria-hidden="true"></div>
-                            <span id="authStatus">Desconectado do Spotify</span>
+                <input type="radio" name="deckTab" id="tabBasico" class="tab-radio" checked>
+                <input type="radio" name="deckTab" id="tabEstilo" class="tab-radio">
+                <input type="radio" name="deckTab" id="tabAvancado" class="tab-radio">
+
+                <nav class="tab-nav" role="tablist" aria-label="Seções de controle">
+                    <label for="tabBasico">Básico</label>
+                    <label for="tabEstilo">Estilo</label>
+                    <label for="tabAvancado">Avançado</label>
+                </nav>
+
+                <div class="panels">
+                    <section id="panelBasico" class="tab-panel">
+                        <div class="input-group">
+                            <label for="spotifyUrl">URL do Spotify</label>
+                            <input type="url" id="spotifyUrl" inputmode="url" placeholder="https://open.spotify.com/track/..." aria-describedby="urlHelp" />
+                            <small id="urlHelp" class="help-text">Música ou álbum do Spotify</small>
                         </div>
-                        <button class="btn" id="authBtn">Conectar com Spotify</button>
-                    </div>
 
-                                        <div class="error" id="errorMessage" role="alert" aria-live="polite"></div>
+                        <button class="btn" id="generateBtn" aria-busy="false">Gerar Wallpaper</button>
 
-                                        <div class="input-group">
-                        <label for="spotifyUrl">URL do Spotify (Música ou Álbum)</label>
-                        <input type="url" id="spotifyUrl" inputmode="url" placeholder="https://open.spotify.com/track/..." aria-describedby="urlHelp" />
-                        <small id="urlHelp" class="help-text">Aceita links de música ou álbum do Spotify. Ex.: https://open.spotify.com/track/...</small>
-                    </div>
+                        <div class="input-group">
+                            <label for="orientation">Orientação</label>
+                            <select id="orientation">
+                                <option value="portrait" selected>Retrato · 1080×1920</option>
+                                <option value="landscape">Paisagem · 1920×1080</option>
+                            </select>
+                        </div>
 
-                    <button class="btn" id="generateBtn" aria-busy="false">Gerar Wallpaper</button>
+                        <div class="input-group" id="landscapeStyleGroup" style="display: none;">
+                            <label for="landscapeStyle">Estilo da paisagem</label>
+                            <select id="landscapeStyle">
+                                <option value="column" selected>Coluna</option>
+                                <option value="poster">Poster</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="cinematic">Cinemática</option>
+                            </select>
+                        </div>
 
-                    <div class="customize" id="customizePanel">
-                        <h3>Personalize</h3>
+                        <div class="input-group">
+                            <label for="titleOverride">Título no wallpaper</label>
+                            <input type="text" id="titleOverride" maxlength="80" placeholder="Título original da música/álbum" />
+                            <small class="help-text">Edite se o título original for muito longo</small>
+                        </div>
+                    </section>
+
+                    <section id="panelEstilo" class="tab-panel">
                         <div class="grid-2">
-                            <div class="input-group">
-                                <label for="orientation">Orientação</label>
-                                <select id="orientation">
-                                    <option value="portrait" selected>Retrato (1080×1920)</option>
-                                    <option value="landscape">Paisagem (1920×1080)</option>
-                                </select>
-                            </div>
-                            <div class="input-group" id="landscapeStyleGroup" style="display: none;">
-                                <label for="landscapeStyle">Estilo da paisagem</label>
-                                <select id="landscapeStyle">
-                                    <option value="column" selected>Coluna (capa + texto)</option>
-                                    <option value="poster">Poster centralizado</option>
-                                    <option value="editorial">Editorial (tipografia grande)</option>
-                                    <option value="cinematic">Capa cinemática</option>
-                                </select>
-                            </div>
-                            <div class="input-group" style="grid-column: 1 / -1;">
-                                <label for="titleOverride">Título no wallpaper</label>
-                                <input type="text" id="titleOverride" maxlength="80" placeholder="Título original da música/álbum" />
-                                <small class="help-text">Edite se o título original for muito longo</small>
-                            </div>
                             <div class="input-group">
                                 <label for="bgColor">Cor de fundo</label>
                                 <input type="color" id="bgColor" value="#000000" />
@@ -244,54 +255,57 @@
                                     <option value="dark">Escuro</option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label for="vignetteIntensity">Intensidade da vinheta</label>
-                                <input type="range" id="vignetteIntensity" min="0" max="1" step="0.05" value="0.4" />
-                            </div>
-                            <div class="input-group">
-                                <label for="showPalette">Mostrar paleta</label>
-                                <select id="showPalette">
-                                    <option value="true" selected>Sim</option>
-                                    <option value="false">Não</option>
-                                </select>
-                            </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div class="loading" id="loading" aria-live="polite">
-                        <div class="spinner" aria-hidden="true"></div>
-                        <p>Gerando wallpaper...</p>
-                    </div>
+                    <section id="panelAvancado" class="tab-panel">
+                        <div class="input-group">
+                            <label for="vignetteIntensity">Intensidade da vinheta</label>
+                            <input type="range" id="vignetteIntensity" min="0" max="1" step="0.05" value="0.4" />
+                        </div>
+                        <div class="input-group">
+                            <label for="showPalette">Mostrar paleta</label>
+                            <select id="showPalette">
+                                <option value="true" selected>Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
 
-                    <div class="how-it-works">
-                        <h3>Como Funciona</h3>
-                        <ol>
-                            <li>Conecte-se com sua conta Spotify</li>
-                            <li>Cole a URL de uma música ou álbum do Spotify</li>
-                            <li>A app extrai os metadados e a capa do álbum</li>
-                            <li>Uma paleta de cores é gerada automaticamente</li>
-                            <li>Um wallpaper 1080×1920 é criado com design minimalista</li>
-                            <li>Baixe sua criação personalizada</li>
-                        </ol>
-                    </div>
+                        <details class="how-it-works">
+                            <summary>Como funciona</summary>
+                            <ol>
+                                <li>Conecte-se com sua conta Spotify (opcional)</li>
+                                <li>Cole a URL de uma música ou álbum do Spotify</li>
+                                <li>A capa e a paleta de cores são extraídas automaticamente</li>
+                                <li>Ajuste o estilo do wallpaper</li>
+                                <li>Baixe sua criação em PNG</li>
+                            </ol>
+                        </details>
+                    </section>
                 </div>
 
-                <div class="right-panel">
+                <div class="loading" id="loading" aria-live="polite">
+                    <div class="spinner" aria-hidden="true"></div>
+                    <p>Gerando wallpaper...</p>
+                </div>
+            </aside>
+
+            <main class="stage">
+                <div class="canvas-frame">
                     <canvas id="canvas" width="1080" height="1920" role="img" aria-label="Prévia do wallpaper gerado"></canvas>
-
-                    <div class="metadata" id="metadata" style="display: none;">
-                        <h3>Metadados</h3>
-                        <p><strong>Título:</strong> <span id="metaTitle">-</span></p>
-                        <p><strong>Artista:</strong> <span id="metaArtist">-</span></p>
-                        <p><strong>Duração:</strong> <span id="metaDuration">-</span></p>
-                        <p><strong>Cor Dominante:</strong> <span id="metaColor">-</span></p>
-                    </div>
-
-                    <div class="download-btn">
-                        <button class="btn" id="downloadBtn" disabled>Baixar PNG</button>
-                    </div>
                 </div>
-            </div>
+
+                <div class="meta-row" id="metadata" style="display: none;">
+                    <div class="meta-chip"><span>Título</span><strong id="metaTitle">-</strong></div>
+                    <div class="meta-chip"><span>Artista</span><strong id="metaArtist">-</strong></div>
+                    <div class="meta-chip"><span>Duração</span><strong id="metaDuration">-</strong></div>
+                    <div class="meta-chip"><span>Cor</span><strong id="metaColor">-</strong></div>
+                </div>
+
+                <div class="download-btn">
+                    <button class="btn" id="downloadBtn" disabled>Baixar PNG</button>
+                </div>
+            </main>
         </div>
     </div>
 

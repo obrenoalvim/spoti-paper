@@ -37,7 +37,7 @@ export function updateMetadata(data) {
     document.getElementById('metaArtist').textContent = data.subtitleText;
     document.getElementById('metaDuration').textContent = data.durationText || '—';
     document.getElementById('metaColor').textContent = data.dominant;
-    document.getElementById('metadata').style.display = 'block';
+    document.getElementById('metadata').style.display = 'flex';
 }
 
 
