@@ -210,14 +210,9 @@
                             </select>
                         </div>
 
-                        <div class="input-group" id="landscapeStyleGroup" style="display: none;">
-                            <label for="landscapeStyle">Estilo da paisagem</label>
-                            <select id="landscapeStyle">
-                                <option value="column" selected>Coluna</option>
-                                <option value="poster">Poster</option>
-                                <option value="editorial">Editorial</option>
-                                <option value="cinematic">Cinemática</option>
-                            </select>
+                        <div class="input-group">
+                            <label for="wallpaperStyle">Estilo da arte</label>
+                            <select id="wallpaperStyle"></select>
                         </div>
 
                         <div class="input-group">
@@ -255,6 +250,28 @@
                                     <option value="dark">Escuro</option>
                                 </select>
                             </div>
+                            <div class="input-group">
+                                <label for="backgroundMode">Fundo</label>
+                                <select id="backgroundMode">
+                                    <option value="" selected>Automático (do estilo)</option>
+                                    <option value="solid">Sólido</option>
+                                    <option value="linear">Gradiente linear</option>
+                                    <option value="radial">Gradiente radial</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="fontFamily">Fonte</label>
+                                <select id="fontFamily">
+                                    <option value="grotesque" selected>Grotesque</option>
+                                    <option value="mono">Mono</option>
+                                    <option value="serif">Serif</option>
+                                    <option value="sans">Sans</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="titleFontSize">Tamanho do título</label>
+                                <input type="range" id="titleFontSize" min="24" max="96" step="2" value="48" />
+                            </div>
                         </div>
                     </section>
 
@@ -266,6 +283,40 @@
                         <div class="input-group">
                             <label for="showPalette">Mostrar paleta</label>
                             <select id="showPalette">
+                                <option value="true" selected>Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="paletteCount">Qtd. de cores na paleta</label>
+                            <input type="range" id="paletteCount" min="1" max="8" step="1" value="5" />
+                        </div>
+                        <div class="input-group">
+                            <label for="coverScale">Tamanho da capa</label>
+                            <input type="range" id="coverScale" min="0.5" max="1.5" step="0.05" value="1" />
+                        </div>
+                        <div class="input-group">
+                            <label for="coverRadius">Raio da borda da capa</label>
+                            <input type="range" id="coverRadius" min="0" max="60" step="1" value="8" />
+                        </div>
+                        <div class="input-group">
+                            <label for="showSpotifyCode">Mostrar Spotify Code</label>
+                            <select id="showSpotifyCode">
+                                <option value="true" selected>Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="spotifyCodeScale">Tamanho do Spotify Code</label>
+                            <input type="range" id="spotifyCodeScale" min="0.5" max="1.5" step="0.05" value="1" />
+                        </div>
+                        <div class="input-group">
+                            <label for="subtitleOverride">Subtítulo</label>
+                            <input type="text" id="subtitleOverride" maxlength="80" placeholder="Nome do artista" />
+                        </div>
+                        <div class="input-group">
+                            <label for="showSubtitle">Mostrar subtítulo</label>
+                            <select id="showSubtitle">
                                 <option value="true" selected>Sim</option>
                                 <option value="false">Não</option>
                             </select>
