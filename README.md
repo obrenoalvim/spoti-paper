@@ -1,123 +1,128 @@
-# Gerador de Wallpaper Spotify
+English | [Português](README.pt.md)
+
+# SpotiPaper
 
 [![CI](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml/badge.svg)](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Aplicação web que gera wallpapers 1080×1920 a partir de músicas e álbuns do Spotify. O app extrai a paleta de cores da capa, cria um layout minimalista e permite baixar em PNG. Funciona mesmo sem login (via oEmbed), com dados mais completos quando autenticado.
+Creates 1080×1920 wallpapers from your favorite Spotify tracks and albums, using their cover art colors. The app extracts the cover's color palette, builds a minimalist layout, and lets you download it as a PNG. Works even without login (via oEmbed), with richer data when authenticated.
 
-## Funcionalidades
+**Live demo:** [spotipaper.vercel.app](https://spotipaper.vercel.app)
 
-- Autenticação OAuth2 com PKCE (client-side) para acesso à Spotify Web API
-- Geração via fallback oEmbed quando não autenticado (sem duração total, metadados básicos)
-- Extração de cores com ColorThief (cor dominante + paleta de 5 cores)
-- Renderização em Canvas (1080×1920) com: gradiente, paleta, duração, título, artista, capa arredondada e Spotify Code
-- Interface responsiva e opção de download em PNG
+## Features
 
-## Requisitos
+- OAuth2 with PKCE (client-side) for Spotify Web API access
+- oEmbed fallback when not authenticated (no total duration, basic metadata only)
+- Color extraction with ColorThief (dominant color + 5-color palette)
+- Canvas rendering (1080×1920) with gradient, palette, duration, title, artist, rounded cover art and Spotify Code
+- Responsive interface with PNG download
+
+## Requirements
 
 - Node.js 18+ (Vite 5)
-- Conta no Spotify Developer (para usar autenticação e dados completos)
+- A Spotify Developer account (for authentication and full metadata)
 
-## Como executar
+## Running it
 
-1) Instale dependências
-- bash
-  npm install
+1) Install dependencies
+```bash
+npm install
+```
 
-2) Configure variáveis de ambiente (raiz do projeto)
-Crie um arquivo .env com as chaves a seguir. Ajuste o REDIRECT_URI conforme seu ambiente (desenvolvimento e produção) e inclua os mesmos valores na aba Redirect URIs do app no Spotify Developer Dashboard.
-- env
-  VITE_CLIENT_ID=SEU_CLIENT_ID_DO_SPOTIFY
-  VITE_REDIRECT_URI=http://localhost:5173
-  VITE_SCOPES=user-read-private
+2) Configure environment variables (project root). Create a `.env` file with the keys below. Adjust `REDIRECT_URI` for your environment (dev and production) and add the same values to the Redirect URIs tab of your app in the Spotify Developer Dashboard.
+```env
+VITE_CLIENT_ID=YOUR_SPOTIFY_CLIENT_ID
+VITE_REDIRECT_URI=http://localhost:5173
+VITE_SCOPES=user-read-private
+```
 
-3) Ambiente de desenvolvimento
-- bash
-  npm run dev
+3) Dev server
+```bash
+npm run dev
+```
 
-4) Build de produção e preview
-- bash
-  npm run build
-  npm run preview
+4) Production build and preview
+```bash
+npm run build
+npm run preview
+```
 
-Após subir em produção, lembre-se de atualizar o VITE_REDIRECT_URI e o Redirect URI no dashboard da Spotify.
+Remember to update `VITE_REDIRECT_URI` and the Redirect URI on the Spotify dashboard after deploying to production.
 
-## Como usar
+## How to use
 
-- Opcional: clique em “Conectar com Spotify” para autenticar e obter metadados completos (ex.: duração)
-- Cole a URL de uma música ou de um álbum do Spotify, por exemplo:
-  - https://open.spotify.com/track/...
-  - https://open.spotify.com/album/...
-- Clique em “Gerar Wallpaper” e aguarde a extração da paleta e a renderização
-- Clique em “Baixar PNG” para salvar o resultado
+- Optional: click "Connect with Spotify" to authenticate and get full metadata (e.g. duration)
+- Paste a Spotify track or album URL, for example:
+  - `https://open.spotify.com/track/...`
+  - `https://open.spotify.com/album/...`
+- Click "Generate Wallpaper" and wait for palette extraction and rendering
+- Click "Download PNG" to save the result
 
-Sem login, a aplicação usa oEmbed do Spotify para obter metadados básicos (sem duração). Com login, usa a Web API para obter dados completos (músicas e álbuns, incluindo soma de duração das faixas de um álbum).
+Without login, the app uses Spotify's oEmbed to get basic metadata (no duration). With login, it uses the Web API for full data (tracks and albums, including summed track duration for an album).
 
-## Estrutura do projeto
+## Project structure
 
-- Raiz
-  - index.html — HTML de entrada (Vite)
-  - package.json — scripts e dependências
-  - vercel.json — configuração de deploy (opcional)
-  - .env — variáveis locais (não commitar)
-  - dist/ — artefatos de build
-- src/
-  - main.js — bootstrap do app
-  - styles/main.css — estilos da interface
-  - js/config.js — constantes (canvas, fontes, cores) e SPOTIFY_CONFIG
-  - js/app.js — classe principal SpotifyWallpaperApp
-  - js/services/
-    - spotify-auth.js — fluxo OAuth2 PKCE (login, token)
-    - spotify-api.js — chamadas à Spotify Web API e oEmbed
-    - canvas-renderer.js — desenho no Canvas (layout do wallpaper)
-  - js/utils/
-    - color-utils.js — extração de paleta via ColorThief
-    - format-utils.js — formatação (tempo, quebra de texto)
-    - spotify-utils.js — parse de URLs e Spotify Codes
-    - crypto-utils.js — utilitários PKCE (SHA-256, challenge)
-    - ui-utils.js — loading, erro, metadados, download
+- Root
+  - `index.html` — Vite entry point
+  - `package.json` — scripts and dependencies
+  - `vercel.json` — deploy config (optional)
+  - `.env` — local variables (not committed)
+  - `dist/` — build artifacts
+- `src/`
+  - `main.js` — app bootstrap
+  - `styles/main.css` — UI styles
+  - `js/config.js` — constants (canvas, fonts, colors) and `SPOTIFY_CONFIG`
+  - `js/app.js` — main class `SpotifyWallpaperApp`
+  - `js/services/`
+    - `spotify-auth.js` — OAuth2 PKCE flow (login, token)
+    - `spotify-api.js` — Spotify Web API and oEmbed calls
+    - `canvas-renderer.js` — Canvas drawing (wallpaper layout)
+  - `js/utils/`
+    - `color-utils.js` — palette extraction via ColorThief
+    - `format-utils.js` — formatting (time, text wrapping)
+    - `spotify-utils.js` — URL and Spotify Code parsing
+    - `crypto-utils.js` — PKCE utilities (SHA-256, challenge)
+    - `ui-utils.js` — loading, errors, metadata, download
 
-Observação: a pasta dist/ contém a versão empacotada pelo Vite; não edite arquivos nela manualmente.
+Note: `dist/` holds Vite's packaged build; don't edit its files by hand.
 
-## Detalhes técnicos relevantes
+## Technical notes
 
-- Autenticação
-  - PKCE (sem client secret) com code_verifier/code_challenge
-  - Token guardado em sessionStorage; expiração derruba sessão e exige novo login
-- Fallback oEmbed
-  - Sem necessidade de token; retorna thumbnail da capa e título/autor
-- Canvas e ColorThief
-  - As imagens são carregadas com crossOrigin='anonymous' e referrerPolicy='no-referrer'
-  - A extração de cores e o export PNG dependem de CORS correto nas imagens de capa
-- Spotify Codes
-  - O código é renderizado via URL pública scannables.scdn.co; verifique termos de uso do Spotify Codes antes de usar em produção
+- **Auth**: PKCE (no client secret) with code_verifier/code_challenge. Token kept in sessionStorage; expiry ends the session and requires a new login.
+- **oEmbed fallback**: no token required; returns cover thumbnail and title/author.
+- **Canvas and ColorThief**: cover images load with `crossOrigin='anonymous'` and `referrerPolicy='no-referrer'`. Color extraction and PNG export depend on correct CORS on cover images.
+- **Spotify Codes**: rendered via the public `scannables.scdn.co` URL; check Spotify Codes' terms of use before using this in production.
 
-## Limitações e troubleshooting
+## Limitations and troubleshooting
 
-- CORS em capas: se a imagem não permitir CORS, a extração de cores e/ou o download do canvas podem falhar. Tente outra faixa/álbum ou hospede/roteie imagens com cabeçalhos adequados.
-- Redirect URI: precisa ser idêntico ao configurado no Spotify Dashboard (inclusive protocolo/porta). Em dev, use http://localhost:5173.
-- Token expirado: ao receber 401, a app faz logout e pede novo login.
-- oEmbed: fornece metadados limitados; duração pode aparecer como “—”.
+- CORS on covers: if the image doesn't allow CORS, color extraction and/or canvas download may fail. Try another track/album or serve/proxy images with proper headers.
+- Redirect URI: must exactly match what's configured on the Spotify Dashboard (protocol/port included). In dev, use `http://localhost:5173`.
+- Expired token: on a 401, the app logs out and asks for a new login.
+- oEmbed: provides limited metadata; duration may show as "—".
 
-## Personalização rápida
+## Quick customization
 
-- Dimensões/layout: src/js/config.js (CANVAS_CONFIG)
-- Cores e fontes: src/js/config.js (COLOR_CONFIG, FONT_CONFIG)
-- Lógica de desenho: src/js/services/canvas-renderer.js
+- Dimensions/layout: `src/js/config.js` (`CANVAS_CONFIG`)
+- Colors and fonts: `src/js/config.js` (`COLOR_CONFIG`, `FONT_CONFIG`)
+- Drawing logic: `src/js/services/canvas-renderer.js`
 
-## Dependências principais
+## Main dependencies
 
-- Vite 5 (bundler e dev server)
-- ColorThief (extração de paleta)
-- Spotify Web API e oEmbed
+- Vite 5 (bundler and dev server)
+- ColorThief (palette extraction)
+- Spotify Web API and oEmbed
 
-## Contribuição
+## Contributing
 
-- Abra issues/PRs descrevendo claramente a mudança
-- Mantenha o padrão de código e a separação por camadas (services/utils)
-- Atualize este README quando alterar comportamento de build/execução
+- Open issues/PRs describing the change clearly
+- Keep the code style and the services/utils layering
+- Update this README when build/run behavior changes
 
-## Avisos
+## Notices
 
-- Respeite termos e políticas do Spotify (Web API e Spotify Codes)
-- Não commitar .env e credenciais
-- Teste em navegadores modernos (Canvas, Web Crypto, ES Modules)
+- Respect Spotify's terms and policies (Web API and Spotify Codes)
+- Don't commit `.env` or credentials
+- Test in modern browsers (Canvas, Web Crypto, ES Modules)
+
+## License
+
+MIT
