@@ -11,8 +11,7 @@ import {
     showError,
     hideError,
     updateMetadata,
-    downloadWallpaper,
-    copyPromptToClipboard
+    downloadWallpaper
 } from './utils/ui-utils.js';
 
 const LAYOUT_PREFS_KEY = 'spotipaper:layoutPrefs';

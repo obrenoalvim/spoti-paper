@@ -43,19 +43,6 @@ export function updateMetadata(data) {
 
 
 
-export async function copyPromptToClipboard() {
-    const textarea = document.getElementById('promptTextarea');
-    const btn = document.getElementById('copyPromptBtn');
-    try {
-        await navigator.clipboard.writeText(textarea.value || '');
-        const original = btn.textContent;
-        btn.textContent = 'Copiado!';
-        setTimeout(() => (btn.textContent = original), 1500);
-    } catch (e) {
-        console.warn('Falha ao copiar:', e);
-    }
-}
-
 export function downloadWallpaper(currentTrackData) {
     if (!currentTrackData) return;
     const canvas = document.getElementById('canvas');

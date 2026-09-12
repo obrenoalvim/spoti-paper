@@ -22,6 +22,10 @@ export class SpotifyAPI {
             throw new Error('Token expirado. Faça login novamente.');
         }
 
+        if (response.status === 429) {
+            throw new Error('Muitas requisições ao Spotify. Aguarde alguns instantes e tente novamente.');
+        }
+
         if (!response.ok) {
             throw new Error(`Erro da API: ${response.status}`);
         }
@@ -32,8 +36,6 @@ export class SpotifyAPI {
         async getTrackData(trackId) {
         const data = await this.apiCall(`/tracks/${trackId}`);
 
-        console.log('data', data)
-        
         return {
             type: 'track',
             id: data.id,
@@ -62,8 +64,18 @@ export class SpotifyAPI {
                     'Authorization': `Bearer ${this.auth.getAccessToken()}`,
                 },
             });
+
+            if (response.status === 401) {
+                this.auth.logout();
+                throw new Error('Token expirado. Faça login novamente.');
+            }
+
+            if (!response.ok) {
+                throw new Error(`Erro da API: ${response.status}`);
+            }
+
             const pageData = await response.json();
-            
+
             pageData.items.forEach(track => {
                 totalDurationMs += track.duration_ms;
             });

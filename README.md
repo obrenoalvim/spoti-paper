@@ -70,7 +70,7 @@ Without login, the app uses Spotify's oEmbed to get basic metadata (no duration)
 - `src/`
   - `main.js` — app bootstrap
   - `styles/main.css` — UI styles
-  - `js/config.js` — constants (canvas, fonts, colors) and `SPOTIFY_CONFIG`
+  - `js/config.js` — constants (`PORTRAIT_SIZE`, `LANDSCAPE_SIZE`, `ORIENTATION_LAYOUTS`, fonts, colors) and `SPOTIFY_CONFIG`
   - `js/app.js` — main class `SpotifyWallpaperApp`
   - `js/services/`
     - `spotify-auth.js` — OAuth2 PKCE flow (login, token)
@@ -101,7 +101,7 @@ Note: `dist/` holds Vite's packaged build; don't edit its files by hand.
 
 ## Quick customization
 
-- Dimensions/layout: `src/js/config.js` (`CANVAS_CONFIG`)
+- Dimensions/layout: `src/js/config.js` (`PORTRAIT_SIZE`, `LANDSCAPE_SIZE`, `ORIENTATION_LAYOUTS`)
 - Colors and fonts: `src/js/config.js` (`COLOR_CONFIG`, `FONT_CONFIG`)
 - Drawing logic: `src/js/services/canvas-renderer.js`
 
