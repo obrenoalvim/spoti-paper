@@ -1,8 +1,26 @@
-[English](README.md) | Português
+<div align="center">
+
+<img src="public/icon-512.png" alt="Logo do SpotiPaper" width="120" height="120">
 
 # SpotiPaper
 
-[![CI](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml/badge.svg)](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+**Wallpapers das suas músicas e álbuns favoritos do Spotify.**<br>
+Um PNG 1080×1920 montado com as cores da capa. Funciona sem login.
+
+[![Demo ao vivo](https://img.shields.io/badge/Demo_ao_vivo-abrir-1DB954?style=for-the-badge&logo=vercel&logoColor=white)](https://spotipaper.vercel.app)
+
+[![CI](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml/badge.svg)](https://github.com/obrenoalvim/spoti-paper/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/obrenoalvim/spoti-paper?style=flat&logo=github&color=1db954)](https://github.com/obrenoalvim/spoti-paper/stargazers)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](#dependências-principais)
+
+[English](README.md) · **Português**
+
+[Funcionalidades](#funcionalidades) · [Como executar](#como-executar) · [Como usar](#como-usar) · [Detalhes técnicos](#detalhes-técnicos-relevantes) · [Perguntas frequentes](#perguntas-frequentes)
+
+</div>
+
+---
 
 Aplicação web que gera wallpapers 1080×1920 a partir de músicas e álbuns do Spotify, usando as cores da capa. O app extrai a paleta de cores da capa, cria um layout minimalista e permite baixar em PNG. Funciona mesmo sem login (via oEmbed), com dados mais completos quando autenticado.
 
@@ -62,26 +80,26 @@ Sem login, a aplicação usa oEmbed do Spotify para obter metadados básicos (se
 ## Estrutura do projeto
 
 - Raiz
-  - `index.html` — HTML de entrada (Vite)
-  - `package.json` — scripts e dependências
-  - `vercel.json` — configuração de deploy (opcional)
-  - `.env` — variáveis locais (não commitar)
-  - `dist/` — artefatos de build
+  - `index.html`: HTML de entrada (Vite)
+  - `package.json`: scripts e dependências
+  - `vercel.json`: configuração de deploy (opcional)
+  - `.env`: variáveis locais (não commitar)
+  - `dist/`: artefatos de build
 - `src/`
-  - `main.js` — bootstrap do app
-  - `styles/main.css` — estilos da interface
-  - `js/config.js` — constantes (`PORTRAIT_SIZE`, `LANDSCAPE_SIZE`, `ORIENTATION_LAYOUTS`, fontes, cores) e `SPOTIFY_CONFIG`
-  - `js/app.js` — classe principal `SpotifyWallpaperApp`
+  - `main.js`: bootstrap do app
+  - `styles/main.css`: estilos da interface
+  - `js/config.js`: constantes (`PORTRAIT_SIZE`, `LANDSCAPE_SIZE`, `ORIENTATION_LAYOUTS`, fontes, cores) e `SPOTIFY_CONFIG`
+  - `js/app.js`: classe principal `SpotifyWallpaperApp`
   - `js/services/`
-    - `spotify-auth.js` — fluxo OAuth2 PKCE (login, token)
-    - `spotify-api.js` — chamadas à Spotify Web API e oEmbed
-    - `canvas-renderer.js` — desenho no Canvas (layout do wallpaper)
+    - `spotify-auth.js`: fluxo OAuth2 PKCE (login, token)
+    - `spotify-api.js`: chamadas à Spotify Web API e oEmbed
+    - `canvas-renderer.js`: desenho no Canvas (layout do wallpaper)
   - `js/utils/`
-    - `color-utils.js` — extração de paleta via ColorThief
-    - `format-utils.js` — formatação (tempo, quebra de texto)
-    - `spotify-utils.js` — parse de URLs e Spotify Codes
-    - `crypto-utils.js` — utilitários PKCE (SHA-256, challenge)
-    - `ui-utils.js` — loading, erro, metadados, download
+    - `color-utils.js`: extração de paleta via ColorThief
+    - `format-utils.js`: formatação (tempo, quebra de texto)
+    - `spotify-utils.js`: parse de URLs e Spotify Codes
+    - `crypto-utils.js`: utilitários PKCE (SHA-256, challenge)
+    - `ui-utils.js`: loading, erro, metadados, download
 
 Observação: a pasta `dist/` contém a versão empacotada pelo Vite; não edite arquivos nela manualmente.
 
@@ -97,7 +115,7 @@ Observação: a pasta `dist/` contém a versão empacotada pelo Vite; não edite
 - CORS em capas: se a imagem não permitir CORS, a extração de cores e/ou o download do canvas podem falhar. Tente outra faixa/álbum ou hospede/roteie imagens com cabeçalhos adequados.
 - Redirect URI: precisa ser idêntico ao configurado no Spotify Dashboard (inclusive protocolo/porta). Em dev, use `http://localhost:5173`.
 - Token expirado: ao receber 401, a app faz logout e pede novo login.
-- oEmbed: fornece metadados limitados; duração pode aparecer como "—".
+- oEmbed: fornece metadados limitados; duração pode aparecer como um traço.
 
 ## Personalização rápida
 
@@ -123,6 +141,37 @@ Observação: a pasta `dist/` contém a versão empacotada pelo Vite; não edite
 - Não commitar `.env` e credenciais
 - Teste em navegadores modernos (Canvas, Web Crypto, ES Modules)
 
+---
+
+## Perguntas frequentes
+
+**Preciso de conta no Spotify?**
+Não. Sem login o app usa o oEmbed do Spotify para metadados básicos (sem duração). Com login (OAuth2 com PKCE) ele usa a Web API para dados completos, inclusive a duração somada de um álbum.
+
+**Meu token do Spotify fica salvo?**
+O token fica no `sessionStorage`. Quando expira, a sessão termina e o app pede um novo login. Não há client secret.
+
+**Por que o download ou a extração de cores falha em algumas capas?**
+A extração de cores e a exportação em PNG precisam de CORS correto na imagem da capa. Tente outra música ou álbum, ou sirva a imagem por um proxy com os cabeçalhos certos.
+
+**Posso mudar o layout ou as cores?**
+Pode. Dimensões, cores e fontes ficam em `src/js/config.js`, e a lógica de desenho está em `src/js/services/canvas-renderer.js`. Veja [Personalização rápida](#personalização-rápida).
+
+## Mais geradores de poster do mesmo autor
+
+- [**github-wrapped**](https://github.com/obrenoalvim/github-wrapped): um poster estilo Spotify Wrapped para o seu ano no GitHub.
+- [**claude-code-wrapped**](https://github.com/obrenoalvim/claude-code-wrapped): seu histórico do Claude Code como um poster compartilhável.
+
 ## Licença
 
-MIT
+MIT, veja [LICENSE](LICENSE).
+
+---
+
+<div align="center">
+
+Se o SpotiPaper fez um wallpaper que você guardou, uma ⭐ ajuda outras pessoas a encontrá-lo.
+
+<sub>**Tópicos:** spotify · spotify-api · wallpaper-generator · album-art · color-palette · colorthief · canvas · oauth2 · pkce · vite · javascript</sub>
+
+</div>
